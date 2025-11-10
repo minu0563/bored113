@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aim</title>
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #282c34;
+            color: white;
+            font-family: Arial, sans-serif;
+        }
+        .circle {
+            width: 80px;
+            height: 80px;
+            background-color: white;
+            border-radius: 50%;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            transition: 0.2s;
+            cursor: pointer;
+        }
+
+        .score {
+            position: fixed;
+            top: 10px;
+            left: 10px;
+            font-size: 24px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <p class="score">0</p>
+    <div class="circle"></div>
+
+    <script>
+        const circle = document.querySelector('.circle');
+        const scoreElement = document.querySelector('.score');
+        let score = 0;
+
+        circle.addEventListener('mouseenter', () => {
+            score++;
+            scoreElement.textContent = score;
+
+            const maxX = window.innerWidth - circle.offsetWidth;
+            const maxY = window.innerHeight - circle.offsetHeight;
+
+            const randomX = Math.random() * maxX;
+            const randomY = Math.random() * maxY;
+
+            circle.style.left = `${randomX}px`;
+            circle.style.top = `${randomY}px`;
+        });
+    </script>
+</body>
+</html>
