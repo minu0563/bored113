@@ -22,44 +22,96 @@
             background-color: white;
             border-radius: 50%;
             position: absolute;
-            top: 50%;
-            left: 50%;
             transform: translate(-50%, -50%);
             transition: 0.2s;
             cursor: pointer;
+            display: none;
         }
-
         .score {
-            position: fixed;
-            top: 10px;
-            left: 10px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
             font-size: 24px;
             font-weight: bold;
+        }
+        button {
+            margin: 5px;
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        .menu {
+            display: flex;
+            justify-content: center;
+            align-items: center;
         }
     </style>
 </head>
 <body>
     <p class="score">0</p>
+    <div class="menu">
+        <button onclick="location.reload()">Restart</button>
+        <button onclick="start('click')">mode1 (Click)</button>
+        <button onclick="start('hover')">mode2 (Hover)</button>
+        <button onclick="plusBall()">+</button>
+        <button onclick="unplusBall()">-</button>
+    </div>
     <div class="circle"></div>
-
     <script>
-        const circle = document.querySelector('.circle');
-        const scoreElement = document.querySelector('.score');
+        const scoreDisplay = document.querySelector('.score');
         let score = 0;
+        let mode = '';
+        let circles = [];
 
-        circle.addEventListener('mouseenter', () => {
+        function moveCircle(circle) {
+            const x = Math.random() * (window.innerWidth - circle.offsetWidth);
+            const y = Math.random() * (window.innerHeight - circle.offsetHeight);
+            circle.style.left = `${x}px`;
+            circle.style.top = `${y}px`;
+        }
+
+        function upScore(event) {
             score++;
-            scoreElement.textContent = score;
+            scoreDisplay.textContent = score;
+            moveCircle(event.target);
+        }
 
-            const maxX = window.innerWidth - circle.offsetWidth;
-            const maxY = window.innerHeight - circle.offsetHeight;
+        function start(selectedMode) {
+            mode = selectedMode;
+            score = 0;
+            scoreDisplay.textContent = score;
+            circles.forEach(c => c.remove());
+            circles = [];
+            const firstCircle = document.querySelector('.circle');
+            firstCircle.style.display = 'block';
+            firstCircle.style.left = '50%';
+            firstCircle.style.top = '75%';
+            attachEvent(firstCircle);
+            moveCircle(firstCircle);
+            circles.push(firstCircle);
+        }
 
-            const randomX = Math.random() * maxX;
-            const randomY = Math.random() * maxY;
+        function attachEvent(circle) {
+            if (mode === 'click') circle.addEventListener('click', upScore);
+            else if (mode === 'hover') circle.addEventListener('mouseenter', upScore);
+        }
 
-            circle.style.left = `${randomX}px`;
-            circle.style.top = `${randomY}px`;
-        });
+        function plusBall() {
+            if (mode === '') return;
+            const newCircle = document.createElement('div');
+            newCircle.classList.add('circle');
+            document.body.appendChild(newCircle);
+            newCircle.style.display = 'block';
+            attachEvent(newCircle);
+            moveCircle(newCircle);
+            circles.push(newCircle);
+        }
+
+        function unplusBall() {
+            if (circles.length <= 1) return;
+            const lastCircle = circles.pop();
+            lastCircle.remove();
+        }
     </script>
 </body>
 </html>
