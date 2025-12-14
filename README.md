@@ -1,1 +1,1 @@
-Boreddddddddddddddddddddddddddddddddddddddddddddd!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!awef
+ㄷㄹㄷㄹㅈㄴㄷBoreddddddddddddddddddddddddddddddddddddddddddddd!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!awef
