@@ -4,6 +4,7 @@ import Image from 'next/image';
 import { useState, useEffect, useRef } from 'react';
 import AnimatedSection from './AnimatedSection';
 import Link from "next/link";
+import ColorChange from './ColorChange';
 
 export default function Home() {
   const boxes = [
@@ -108,7 +109,9 @@ export default function Home() {
       <div className="mt-12 flex flex-col justify-center items-center text-center">
         <AnimatedSection>
           <p className="text-3xl sm:text-4xl md:text-5xl lg:text-7xl font-medium mt-20 gold">
-            Welcome to our official website
+            <ColorChange duration={1000} animate={true}>
+              Welcome to our official website
+            </ColorChange>
           </p>
         </AnimatedSection>
 
@@ -126,7 +129,9 @@ export default function Home() {
               </h4>
               <Link href='/extensionpage'>
                 <h4 className='text-lg cursor-pointer gold sm:mr-3 md:mr-6 lg:mr-10'>
-                  Go to extension page
+                  <ColorChange duration={1000} animate={true}>
+                    Go to extension page
+                  </ColorChange>
                 </h4>
               </Link>
             </div>

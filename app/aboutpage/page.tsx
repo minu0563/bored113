@@ -4,6 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import AnimatedSection from "../AnimatedSection";
 import "../globals.css";
+import ColorChange from "../ColorChange";
 
 export default function Home() {
   const [hovered, setHovered] = useState<number | null>(null);
@@ -20,13 +21,7 @@ export default function Home() {
       >
         PortFolio
       </h1>
-
-      <AnimatedSection>
-        <p className="text-sm sm:text-xl md:text-2xl lg:text-3xl text-center max-w-3xl px-4">
-          This is our portfolio page where you can find all our projects and works.
-        </p>
-      </AnimatedSection>
-
+      
       <div className="flex flex-wrap justify-center items-start gap-8 mt-10 w-full px-4">
         <AnimatedSection delay={50}>
           <div
@@ -73,7 +68,7 @@ export default function Home() {
 
       <div className="pb-15 border-b-2 border-gray-500 w-2/3 mt-2 mb-10"></div>
 
-      <div className="flex flex-col justify-center items-center text-gray-500">
+      <div className="flex flex-col justify-center items-center text-gray-500 mb-10">
         <p>Our team, CoCoNuT, consists of two members, Kwak Do Young and Park Ju Hyun, who collaborate on projects together.</p>
         <p>This page serves as a portfolio where each member documents their coding experiences and the parts of the project they were responsible for.</p>
       </div>

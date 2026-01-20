@@ -1,14 +1,13 @@
-// ColorChange.tsx
 'use client';
 import React, { useEffect, useRef } from 'react';
 import './globals.css';
 
 interface ColorChangeProps {
   children: React.ReactNode;
-  className?: string; 
+  className?: string;
   animate?: boolean;
   delay?: number;
-  duration?: number; 
+  duration?: number;
 }
 
 const ColorChange: React.FC<ColorChangeProps> = ({
@@ -16,38 +15,55 @@ const ColorChange: React.FC<ColorChangeProps> = ({
   className = '',
   animate = false,
   delay = 0,
-  duration = 1500,
+  duration = 500,
 }) => {
   const ref = useRef<HTMLSpanElement>(null);
+  const hasAnimated = useRef(false);
 
   useEffect(() => {
     const el = ref.current;
     if (!el) return;
 
-    const timer = setTimeout(() => {
-      el.classList.add('color-change');
-      el.style.animation = `slide-gradient ${duration}ms linear forwards`;
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (!entry.isIntersecting || hasAnimated.current) return;
 
-      const finishTimer = setTimeout(() => {
-        el.style.animation = '';
+        hasAnimated.current = true;
 
-        if (!animate) {
-          el.classList.remove('color-change'); 
+        const timer = setTimeout(() => {
+          el.classList.add('color-change');
+          el.style.animation = `slide-gradient ${duration}ms linear forwards`;
 
-          if (!className) {
-            el.classList.add('color-white'); 
-          }
-        }
-      }, duration);
+          const finishTimer = setTimeout(() => {
+            el.style.animation = '';
 
-      return () => clearTimeout(finishTimer);
-    }, delay * 1000);
+            if (!animate) {
+              el.classList.remove('color-change');
 
-    return () => clearTimeout(timer);
+              if (!className) {
+                el.classList.add('color-white');
+              }
+            }
+          }, duration);
+
+          return () => clearTimeout(finishTimer);
+        }, delay);
+
+        observer.disconnect();
+        return () => clearTimeout(timer);
+      },
+      {
+        threshold: 0.3,
+      }
+    );
+
+    observer.observe(el);
+
+    return () => observer.disconnect();
   }, [animate, delay, duration, className]);
 
   return (
-    <span ref={ref} className={`${className}`}>
+    <span ref={ref} className={className}>
       {children}
     </span>
   );
