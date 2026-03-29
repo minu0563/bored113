@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>ULTIMATE_TERMINAL_2026</title>
+    <style>
+        :root {
+            --neon: #00ff41;
+            --alert: #ff003c;
+            --bg: #020a02;
+        }
+
+        body {
+            background-color: var(--bg);
+            color: var(--neon);
+            font-family: 'Courier New', Courier, monospace;
+            margin: 0; overflow: hidden;
+            height: 100vh; display: flex; justify-content: center; align-items: center;
+        }
+
+        /* 전체 화면 노이즈 효과 */
+        .noise {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: url('https://media.giphy.com/media/oEI9uWUicG6G6Z7nFe/giphy.gif');
+            opacity: 0.03; pointer-events: none; z-index: 1000;
+        }
+
+        .main-layout {
+            display: grid;
+            grid-template-columns: 300px 1fr 300px;
+            grid-template-rows: 60px 1fr 100px;
+            gap: 15px; width: 95vw; height: 90vh;
+            position: relative; z-index: 10;
+        }
+
+        .panel {
+            background: rgba(0, 15, 0, 0.9);
+            border: 1px solid var(--neon);
+            position: relative; padding: 15px;
+            box-shadow: inset 0 0 15px rgba(0, 255, 65, 0.1);
+        }
+
+        /* 헤더 전용 */
+        .header { grid-column: span 3; display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid var(--neon); }
+        .glitch-text { font-size: 1.5rem; font-weight: bold; animation: glitch 2s infinite; }
+
+        /* 터미널 본체 */
+        .terminal { grid-column: 2; overflow-y: auto; border: 2px solid var(--neon); position: relative; }
+        .terminal::before { content: "ENCRYPTED_SESSION"; position: absolute; top: 5px; right: 10px; font-size: 10px; opacity: 0.5; }
+
+        /* 경고 팝업 애니메이션 */
+        .alert-box {
+            position: absolute; top: 20%; left: 50%; transform: translateX(-50%);
+            background: var(--alert); color: white; padding: 20px;
+            font-weight: bold; border: 4px double white;
+            display: none; z-index: 2000; animation: flash 0.5s infinite;
+        }
+
+        @keyframes glitch {
+            0% { transform: translate(0); }
+            20% { transform: translate(-2px, 2px); }
+            40% { transform: translate(-2px, -2px); }
+            60% { transform: translate(2px, 2px); }
+            80% { transform: translate(2px, -2px); }
+            100% { transform: translate(0); }
+        }
+
+        @keyframes flash { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
+
+        .stat-row { display: flex; justify-content: space-between; margin-bottom: 10px; font-size: 0.8rem; }
+        .bar-bg { width: 100%; height: 4px; background: #002200; margin-top: 5px; }
+        .bar-fill { height: 100%; background: var(--neon); width: 0%; transition: width 0.3s; }
+
+        #output div { margin-bottom: 8px; }
+        .tag { color: #888; margin-right: 10px; }
+    </style>
+</head>
+<body>
+
+<div class="noise"></div>
+<div class="alert-box" id="alert">!! INTRUSION DETECTED !!</div>
+
+<div class="main-layout">
+    <header class="panel header">
+        <div class="glitch-text">CRITICAL_OVERRIDE_OS</div>
+        <div>STATUS: <span id="status-text">INTERCEPTING...</span></div>
+        <div id="clock">00:00:00</div>
+    </header>
+
+    <aside class="panel">
+        <h3 style="margin-top:0; font-size:12px;">HARDWARE_CORE</h3>
+        <div class="stat-row"><span>CPU_TEMP</span><span id="temp-val">42°C</span></div>
+        <div class="bar-bg"><div class="bar-fill" id="temp-bar" style="width: 42%"></div></div>
+        
+        <div class="stat-row" style="margin-top:20px;"><span>SIGNAL_STRENGTH</span></div>
+        <canvas id="signal-chart" width="250" height="100"></canvas>
+        
+        <div id="file-stream" style="font-size: 9px; margin-top: 20px; color: #006600;"></div>
+    </aside>
+
+    <main class="panel terminal" id="terminal-scroll">
+        <div id="output"></div>
+        <div><span style="color:white">></span> <span id="typing-line"></span><span style="display:inline-block; width:8px; height:15px; background:var(--neon); animation:blink 1s infinite;"></span></div>
+    </main>
+
+    <aside class="panel">
+        <h3 style="margin-top:0; font-size:12px;">TRACE_LOCATION</h3>
+        <div id="map-sim" style="height: 150px; border: 1px solid #004400; display: flex; flex-wrap: wrap; align-content: flex-start;">
+            </div>
+        <p style="font-size: 10px; margin-top: 10px;">TARGET_IP: 192.168.0.254<br>LAT: 37.5665 / LON: 126.9780</p>
+    </aside>
+
+    <footer class="panel" style="grid-column: span 3; font-size: 10px; display: flex; align-items: center; justify-content: space-around; opacity: 0.6;">
+        <span>ENCRYPTION: AES-256</span>
+        <span>GATEWAY: ACTIVE</span>
+        <span>X-SERVER: CONNECTED</span>
+        <span>ROOT@INTERNAL_SRV:~#</span>
+    </footer>
+</div>
+
+<script>
+    // 1. 시각적 유틸리티 (시계, 맵 그리드)
+    function updateClock() {
+        document.getElementById('clock').innerText = new Date().toLocaleTimeString();
+    }
+    setInterval(updateClock, 1000);
+
+    const mapSim = document.getElementById('map-sim');
+    for(let i=0; i<100; i++) {
+        const dot = document.createElement('div');
+        dot.style.width = '10%'; dot.style.height = '10%'; dot.style.border = '0.1px solid #002200';
+        mapSim.appendChild(dot);
+    }
+
+    // 2. 터미널 타이핑 효과
+    const output = document.getElementById('output');
+    const fullLog = [
+        "BOOT_SEQ: SUCCESS", "LOADING_KERNEL... DONE", "MTU_SET: 1500", 
+        "SCANNING_OPEN_PORTS...", "PORT_80: CLOSED", "PORT_443: OPEN",
+        "ATTEMPTING_EXPLOIT_0x442...", "PAYLOAD_SENT.", "STAGGER_ACTIVE.",
+        "ACCESS_GRANTED_BY_ROOT.", "DOWNLOADING_SENSITIVE_DATA..."
+    ];
+    let logIdx = 0;
+
+    function addLog() {
+        if(logIdx < fullLog.length) {
+            const row = document.createElement('div');
+            row.innerHTML = `<span class="tag">[SYS_LOG]</span> ${fullLog[logIdx]}`;
+            output.appendChild(row);
+            logIdx++;
+            document.getElementById('terminal-scroll').scrollTop = 9999;
+            
+            // 중간에 가짜 경고 띄우기
+            if(logIdx === 8) {
+                document.getElementById('alert').style.display = 'block';
+                document.getElementById('status-text').innerText = 'DANGER!';
+                document.getElementById('status-text').style.color = 'var(--alert)';
+                setTimeout(() => { document.getElementById('alert').style.display = 'none'; }, 3000);
+            }
+            setTimeout(addLog, Math.random() * 1500 + 500);
+        }
+    }
+    addLog();
+
+    // 3. 하드웨어 차트 및 데이터 스트림
+    const sigCanvas = document.getElementById('signal-chart');
+    const sctx = sigCanvas.getContext('2d');
+    function drawSignal() {
+        sctx.clearRect(0, 0, 250, 100);
+        sctx.strokeStyle = '#00ff41';
+        sctx.beginPath();
+        sctx.moveTo(0, 50);
+        for(let i=0; i<250; i+=10) {
+            sctx.lineTo(i, 50 + (Math.random()-0.5) * 40);
+        }
+        sctx.stroke();
+    }
+    setInterval(drawSignal, 200);
+
+    const fileStream = document.getElementById('file-stream');
+    setInterval(() => {
+        const line = document.createElement('div');
+        line.innerText = `0x${Math.random().toString(16).substr(2, 8).toUpperCase()} FETCHED...`;
+        fileStream.prepend(line);
+        if(fileStream.children.length > 15) fileStream.removeChild(fileStream.lastChild);
+        
+        // 온도 랜덤 업데이트
+        let temp = Math.floor(Math.random() * 20 + 40);
+        document.getElementById('temp-val').innerText = temp + '°C';
+        document.getElementById('temp-bar').style.width = temp + '%';
+    }, 500);
+</script>
+
+</body>
+</html>
