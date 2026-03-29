@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>CHAOS GAME: BARNSLEY FERN</title>
+    <style>
+        body { margin: 0; background: #050505; overflow: hidden; display: flex; justify-content: center; align-items: center; height: 100vh; }
+        canvas { filter: drop-shadow(0 0 10px #2ecc71); }
+        .ui {
+            position: absolute; top: 30px; left: 30px;
+            color: #2ecc71; font-family: 'Courier New', monospace;
+            pointer-events: none; line-height: 1.6;
+        }
+        .count { font-size: 2rem; font-weight: bold; color: #fff; }
+    </style>
+</head>
+<body>
+    <div class="ui">
+        <div>ITERATIVE FUNCTION SYSTEM (IFS)</div>
+        <div class="count" id="counter">0</div>
+        <p>GENERATING NATURE FROM CHAOS...</p>
+    </div>
+    <canvas id="canvas"></canvas>
+
+<script>
+    const canvas = document.getElementById('canvas');
+    const ctx = canvas.getContext('2d');
+    const counterEl = document.getElementById('counter');
+
+    let width, height;
+    let x = 0, y = 0;
+    let count = 0;
+
+    function init() {
+        width = canvas.width = window.innerWidth;
+        height = canvas.height = window.innerHeight;
+        ctx.fillStyle = '#050505';
+        ctx.fillRect(0, 0, width, height);
+    }
+
+    // 바운슬리 고사리 알고리즘 (4개의 변환 규칙)
+    function nextPoint() {
+        let nextX, nextY;
+        let r = Math.random();
+
+        if (r < 0.01) {
+            nextX = 0;
+            nextY = 0.16 * y;
+        } else if (r < 0.86) {
+            nextX = 0.85 * x + 0.04 * y;
+            nextY = -0.04 * x + 0.85 * y + 1.6;
+        } else if (r < 0.93) {
+            nextX = 0.2 * x - 0.26 * y;
+            nextY = 0.23 * x + 0.22 * y + 1.6;
+        } else {
+            nextX = -0.15 * x + 0.28 * y;
+            nextY = 0.26 * x + 0.24 * y + 0.44;
+        }
+
+        x = nextX;
+        y = nextY;
+    }
+
+    function draw() {
+        // 한 프레임당 500개의 점을 찍어 속도감 조절
+        for (let i = 0; i < 500; i++) {
+            nextPoint();
+            
+            // 수학적 좌표를 화면 좌표로 변환
+            let px = x * 80 + width / 2;
+            let py = height - (y * 80 + 50);
+
+            ctx.fillStyle = `rgba(46, 204, 113, ${Math.random() * 0.5 + 0.2})`;
+            ctx.fillRect(px, py, 0.7, 0.7);
+            count++;
+        }
+        
+        counterEl.innerText = count.toLocaleString();
+        requestAnimationFrame(draw);
+    }
+
+    init();
+    draw();
+    window.addEventListener('resize', init);
+</script>
+</body>
+</html>
